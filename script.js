@@ -3,18 +3,20 @@
 function getRandomNumber() {
   return Math.floor(Math.random() * (100 - 1 + 1) + 1);
 }
-const getNumber = keepsNum(getRandomNumber());
+const getNumber = keepsNum();
 
 guessNumber();
 
-function keepsNum(number) {
+function keepsNum() {
   let count = 10;
+  let number = getRandomNumber();
   const data = [];
 
-  function giveNum() {
-    if (count === 0) {
+  function giveNum(reload) {
+    if (count === 0 || reload) {
+      number = getRandomNumber();
       data[0] = number;
-      data[1] = count = 9;
+      data[1] = count = 10;
       return data;
     } else {
       count--;
@@ -35,20 +37,22 @@ function guessNumber() {
     let number = data[0];
     console.log(`Число: ${data[0]}, попыток: ${data[1]} `);
 
-    if (checkRange(+value) && count >= 1) {
+    if (checkRange(+value) && count > 0) {
       if (+value > number) {
         alert(`Загаданное число меньше, осталось попыток ${count}`);
         guessNumber();
       } else if (+value < number) {
         alert(`Загаданное число больше, осталось попыток ${count}`);
         guessNumber();
-      } else {
+      } else if (+value === number) {
         let ok = confirm('Поздравляю, Вы угадали!!!\nХотели бы сыграть еще?');
-        return ok ? location.reload() : false;
+        getNumber(true);
+        return ok ? guessNumber() : alert('Тогда в другой раз!');
       }
-    } else {
+    } else if (count < 1) {
       let ok = confirm('Попытки закончились, хотите сыграть еще?');
-      return ok ? location.reload() : false;
+      getNumber(true);
+      return ok ? guessNumber() : alert('Тогда в другой раз!');
     }
   } else if (value === null) {
     alert('Игра окончена!');
